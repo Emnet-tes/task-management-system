@@ -1,4 +1,3 @@
-// src/features/tasks/TaskFormPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TaskForm from "../features/tasks/TaskForm";
@@ -9,66 +8,71 @@ import {
 } from "../features/tasks/taskService";
 import type { TaskInput } from "../types/tasks";
 import { auth } from "../config/firebase";
+import { toast } from "react-toastify";
+import { onAuthStateChanged } from "firebase/auth";
 
 const TaskFormPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const user = auth.currentUser;
+
+  const [user, setUser] = useState(auth.currentUser);
   const [task, setTask] = useState<TaskInput | null>(null);
-  const [loading, setLoading] = useState(!!id);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // Initial loading until auth is known
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        navigate("/");
+        return;
+      }
 
-    if (id) {
-      const fetchTask = async () => {
+      setUser(firebaseUser);
+
+      if (id) {
         try {
-          const taskData = await getTaskById(user.uid, id);
-          // Verify the task belongs to the current user
-          if (taskData.userId !== user.uid) {
-            console.log("Task not found or does not belong to user");
-            navigate("/dashboard");
+          const taskData = await getTaskById(firebaseUser.uid, id);
+          if (taskData.userId !== firebaseUser.uid) {
+            navigate("/tasks");
             return;
           }
           setTask(taskData);
         } catch (err) {
           console.log("Error fetching task:", err);
-          setError("Failed to load task");
-          console.error(err);
-        } finally {
-          setLoading(false);
+          toast.error("Failed to load task");
         }
-      };
-      fetchTask();
-    } else {
-      setLoading(false);
-    }
-  }, [id, user, navigate]);
+      }
+
+      setLoading(false); 
+    });
+
+    return () => unsubscribe();
+  }, [id, navigate]);
 
   const handleSubmit = async (taskInput: TaskInput) => {
     if (!user) return;
 
     try {
       if (id) {
-        await updateTask(user.uid , id, taskInput);
+        await updateTask(user.uid, id, taskInput);
+        toast.success("Task updated successfully");
       } else {
         await createTask(taskInput, user.uid);
+        toast.success("Task created successfully");
       }
-      navigate("/dashboard");
+      navigate("/tasks");
     } catch (error) {
-      setError("Failed to save task");
+      toast.error("Failed to save task");
       console.error("Error saving task:", error);
     }
   };
 
-  if (loading)
-    return <div className="text-center py-8">Loading task details...</div>;
-  if (error)
-    return <div className="text-center py-8 text-red-500">{error}</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -80,7 +84,7 @@ const TaskFormPage = () => {
           <TaskForm
             onSubmit={handleSubmit}
             existingTask={task}
-            onCancel={() => navigate("/dashboard")}
+            onCancel={() => navigate("/tasks")}
           />
         </div>
       </div>

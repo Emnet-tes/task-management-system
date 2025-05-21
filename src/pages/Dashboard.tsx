@@ -1,88 +1,38 @@
-import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FilterBar from "../components/FilterBar";
 import { auth } from "../config/firebase";
-import TaskList from "../features/tasks/TaskList";
-import { deleteTask, getTasks } from "../features/tasks/taskService";
-import type { Task, TaskPriority, TaskStatus } from "../types/tasks";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
-  const [filters, setFilters] = useState<{
-    status?: TaskStatus;
-    priority?: TaskPriority;
-  }>({});
-  const [sortKey, setSortKey] = useState<"dueDate" | "createdAt">("dueDate");
   const navigate = useNavigate();
-  const user = auth.currentUser;
-  console.log("Fetching tasks for user:", user);
+  const [user, setUser] = useState(auth.currentUser);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
-    const unsubscribe = getTasks(user.uid, setTasks);
-    return () => unsubscribe();
-  }, [user]);
-
-  useEffect(() => {
-    let result = [...tasks];
-
-    // Apply filters
-    if (filters.status) {
-      result = result.filter(task => task.status === filters.status);
-    }
-    if (filters.priority) {
-      result = result.filter(task => task.priority === filters.priority);
-    }
-
-    // Apply sorting
-    result.sort((a, b) => {
-      if (sortKey === "dueDate") {
-        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
       } else {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        navigate("/");
       }
+      setLoading(false);
     });
 
-    setFilteredTasks(result);
-  }, [tasks, filters, sortKey]);
-
-  const handleAddTaskClick = () => {
-    navigate("/tasks/add");
-  };
-
-  const handleEditTask = (task: Task) => {
-    navigate(`/tasks/edit/${task.id}`);
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    if (!user?.uid) {
-      console.error("User is not authenticated.");
-      return;
-    }
-    try {
-      await deleteTask(user.uid , taskId);
-    } catch (error) {
-      console.error("Error deleting task:", error);
-    }
-  };
+    return () => unsubscribe();
+  }, [navigate]);
 
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/");
   };
 
-  const handleFilterChange = (newFilters: {
-    status?: TaskStatus;
-    priority?: TaskPriority;
-  }) => {
-    setFilters(newFilters);
-  };
-
-  const handleSortChange = (newSortKey: "dueDate" | "createdAt") => {
-    setSortKey(newSortKey);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -93,12 +43,6 @@ const Dashboard = () => {
           </h2>
           <div className="flex space-x-2">
             <button
-              onClick={handleAddTaskClick}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
-            >
-              Add Task
-            </button>
-            <button
               onClick={handleLogout}
               className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200"
             >
@@ -106,21 +50,6 @@ const Dashboard = () => {
             </button>
           </div>
         </header>
-
-        <div className="bg-white shadow-sm rounded-lg p-6">
-          <FilterBar
-            onFilterChange={handleFilterChange}
-            onSortChange={handleSortChange}
-          />
-
-          <div className="mt-6">
-            <TaskList
-              tasks={filteredTasks}
-              onEdit={handleEditTask}
-              onDelete={handleDeleteTask}
-            />
-          </div>
-        </div>
       </div>
     </div>
   );

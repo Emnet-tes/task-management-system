@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment } from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -17,7 +17,7 @@ const Modal = ({
   title,
   message,
   confirmText = "Confirm",
-  cancelText = "Cancel"
+  cancelText = "Cancel",
 }: ModalProps) => {
   if (!isOpen) return null;
 
@@ -25,7 +25,7 @@ const Modal = ({
     <Fragment>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+        className="fixed inset-0 bg-black opacity-50 z-40"
         onClick={onClose}
       />
 
@@ -81,4 +81,4 @@ const Modal = ({
   );
 };
 
-export default Modal; 
+export default Modal;
