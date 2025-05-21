@@ -1,7 +1,7 @@
 // src/features/tasks/TaskForm.tsx
 import { useEffect, useState } from "react";
 import type { TaskInput } from "../../types/tasks";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface TaskFormProps {
   onSubmit: (task: TaskInput) => Promise<void>;
@@ -40,7 +40,7 @@ const TaskForm = ({ onSubmit, existingTask, onCancel }: TaskFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit(formData);
-    navigate("/dashboard");
+    navigate("/tasks");
   };
 
   return (

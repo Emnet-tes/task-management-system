@@ -24,7 +24,7 @@ const Dashboard = () => {
       if (user) {
         setUserId(user.uid);
       } else {
-        navigate("/signin");
+        navigate("/");
       }
     });
     return () => unsubscribeAuth();
