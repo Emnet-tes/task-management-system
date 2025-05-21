@@ -1,4 +1,3 @@
-// src/features/tasks/TaskFormPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TaskForm from "../features/tasks/TaskForm";
@@ -10,27 +9,29 @@ import {
 import type { TaskInput } from "../types/tasks";
 import { auth } from "../config/firebase";
 import { toast } from "react-toastify";
+import { onAuthStateChanged } from "firebase/auth";
 
 const TaskFormPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const user = auth.currentUser;
+
+  const [user, setUser] = useState(auth.currentUser);
   const [task, setTask] = useState<TaskInput | null>(null);
-  const [loading, setLoading] = useState(!!id);
+  const [loading, setLoading] = useState(true); // Initial loading until auth is known
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        navigate("/");
+        return;
+      }
 
-    if (id) {
-      const fetchTask = async () => {
+      setUser(firebaseUser);
+
+      if (id) {
         try {
-          const taskData = await getTaskById(user.uid, id);
-          // Verify the task belongs to the current user
-          if (taskData.userId !== user.uid) {
-            console.log("Task not found or does not belong to user");
+          const taskData = await getTaskById(firebaseUser.uid, id);
+          if (taskData.userId !== firebaseUser.uid) {
             navigate("/tasks");
             return;
           }
@@ -38,15 +39,14 @@ const TaskFormPage = () => {
         } catch (err) {
           console.log("Error fetching task:", err);
           toast.error("Failed to load task");
-        } finally {
-          setLoading(false);
         }
-      };
-      fetchTask();
-    } else {
-      setLoading(false);
-    }
-  }, [id, user, navigate]);
+      }
+
+      setLoading(false); 
+    });
+
+    return () => unsubscribe();
+  }, [id, navigate]);
 
   const handleSubmit = async (taskInput: TaskInput) => {
     if (!user) return;
@@ -55,7 +55,6 @@ const TaskFormPage = () => {
       if (id) {
         await updateTask(user.uid, id, taskInput);
         toast.success("Task updated successfully");
-      } else if (task) {
       } else {
         await createTask(taskInput, user.uid);
         toast.success("Task created successfully");
@@ -67,8 +66,14 @@ const TaskFormPage = () => {
     }
   };
 
-  if (loading)
-    return <div className="text-center py-8">Loading task details...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

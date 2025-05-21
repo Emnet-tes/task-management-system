@@ -103,6 +103,13 @@ const TasksPage = () => {
       console.error("Error deleting task:", error);
     }
   };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white shadow-sm rounded-lg px-10 md:px-20 py-10">
@@ -119,15 +126,13 @@ const TasksPage = () => {
       />
 
       <div className="mt-6">
-        {loading ? (
-          <p className="text-gray-500">Loading tasks...</p>
-        ) : (
+        
           <TaskList
             tasks={filteredTasks}
             onEdit={handleEditTask}
             onDelete={handleDeleteTask}
           />
-        )}
+    
       </div>
     </div>
   );

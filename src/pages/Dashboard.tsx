@@ -1,16 +1,38 @@
-import { signOut } from "firebase/auth";
-
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { auth } from "../config/firebase";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const user = auth.currentUser;
+  const [user, setUser] = useState(auth.currentUser);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+      } else {
+        navigate("/");
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
