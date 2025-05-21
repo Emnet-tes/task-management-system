@@ -8,6 +8,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import FilterBar from "../components/FilterBar";
 import HorizontalBarChart from "../components/HorizontalBarChart";
+import Navbar from "../components/Navbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Dashboard = () => {
       if (user) {
         setUserId(user.uid);
       } else {
-        navigate("/signin");
+        navigate("/");
       }
     });
     return () => unsubscribeAuth();
@@ -58,18 +59,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
       <div className="w-full max-w-6xl mx-auto p-4 sm:p-8">
         {/* Top bar */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-            <button
-            onClick={async () => {
-              await signOut(auth);
-              navigate("/");
-            }}
-            className="bg-red-500 text-white px-4 py-2 rounded"
-            >
-            Logout
-            </button>
-        </div>
+        <Navbar />
 
         {/* Row 1: Today, Overdue, Calendar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

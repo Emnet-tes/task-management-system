@@ -112,27 +112,27 @@ const TasksPage = () => {
   }
 
   return (
-    <div className="bg-white shadow-sm rounded-lg px-10 md:px-20 py-10">
-      <Navbar />
-      <button
-        onClick={handleAddTaskClick}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
-      >
-        Add Task
-      </button>
-      <FilterBar
-        onFilterChange={handleFilterChange}
-        onSortChange={handleSortChange}
-      />
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:p-8">
+        <Navbar />
+        <button
+          onClick={handleAddTaskClick}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 mb-4"
+        >
+          Add Task
+        </button>
+        <FilterBar
+          onFilterChange={handleFilterChange}
+          onSortChange={handleSortChange}
+        />
 
-      <div className="mt-6">
-        
+        <div className="mt-6">
           <TaskList
             tasks={filteredTasks}
             onEdit={handleEditTask}
             onDelete={handleDeleteTask}
           />
-    
+        </div>
       </div>
     </div>
   );
