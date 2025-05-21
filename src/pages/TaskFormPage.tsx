@@ -9,6 +9,7 @@ import {
 } from "../features/tasks/taskService";
 import type { TaskInput } from "../types/tasks";
 import { auth } from "../config/firebase";
+import { toast } from "react-toastify";
 
 const TaskFormPage = () => {
   const { id } = useParams();
@@ -16,7 +17,6 @@ const TaskFormPage = () => {
   const user = auth.currentUser;
   const [task, setTask] = useState<TaskInput | null>(null);
   const [loading, setLoading] = useState(!!id);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -31,14 +31,13 @@ const TaskFormPage = () => {
           // Verify the task belongs to the current user
           if (taskData.userId !== user.uid) {
             console.log("Task not found or does not belong to user");
-            navigate("/dashboard");
+            navigate("/tasks");
             return;
           }
           setTask(taskData);
         } catch (err) {
           console.log("Error fetching task:", err);
-          setError("Failed to load task");
-          console.error(err);
+          toast.error("Failed to load task");
         } finally {
           setLoading(false);
         }
@@ -54,22 +53,22 @@ const TaskFormPage = () => {
 
     try {
       if (id) {
-        await updateTask(user.uid , id, taskInput);
+        await updateTask(user.uid, id, taskInput);
+        toast.success("Task updated successfully");
+      } else if (task) {
       } else {
         await createTask(taskInput, user.uid);
+        toast.success("Task created successfully");
       }
-      navigate("/dashboard");
+      navigate("/tasks");
     } catch (error) {
-      setError("Failed to save task");
+      toast.error("Failed to save task");
       console.error("Error saving task:", error);
     }
   };
 
   if (loading)
     return <div className="text-center py-8">Loading task details...</div>;
-  if (error)
-    return <div className="text-center py-8 text-red-500">{error}</div>;
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -80,7 +79,7 @@ const TaskFormPage = () => {
           <TaskForm
             onSubmit={handleSubmit}
             existingTask={task}
-            onCancel={() => navigate("/dashboard")}
+            onCancel={() => navigate("/tasks")}
           />
         </div>
       </div>

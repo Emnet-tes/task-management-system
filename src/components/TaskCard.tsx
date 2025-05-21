@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Task } from "../types/tasks";
 import Modal from "./Modal";
 
@@ -33,12 +34,14 @@ const getStatusColor = (status: string) => {
       return "bg-gray-100 text-gray-800";
   }
 };
-
-const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
+const TaskCard = ({ task, onDelete }: TaskCardProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleDeleteClick = () => {
     setIsDeleteModalOpen(true);
+    setIsMenuOpen(false);
   };
 
   const handleDeleteConfirm = () => {
@@ -52,29 +55,61 @@ const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
     setIsDeleteModalOpen(false);
   };
 
+  const handleViewEdit = () => {
+    navigate(`/tasks/${task.id}`);
+    setIsMenuOpen(false);
+  };
+
   return (
     <>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200">
-        <h4 className="text-lg font-semibold text-gray-800 mb-2">
-          {task.title}
-        </h4>
-        <p className="text-gray-600 mb-4 line-clamp-2">{task.description}</p>
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-sm text-gray-500">
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200">
+        <div className="flex justify-between items-start mb-2">
+          <h4 className="text-lg font-semibold text-gray-800">{task.title}</h4>
+          <div className="relative">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-1 hover:bg-gray-100 rounded-full"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Due: {new Date(task.dueDate).toLocaleDateString()}
+              <svg
+                className="w-5 h-5 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                />
+              </svg>
+            </button>
+            {isMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                <div className="py-1">
+                  <button
+                    onClick={handleViewEdit}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    View/Edit
+                  </button>
+                  <button
+                    onClick={handleDeleteClick}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <p className="text-gray-600 mb-4 line-clamp-1 text-ellipsis">
+          {task.description ? task.description : "No description provided."}
+        </p>
+        <div className="space-y-2">
+          <div className="flex items-center text-sm text-gray-500">
+            Created At: {new Date(task.dueDate).toLocaleDateString()}
           </div>
           <div className="flex flex-wrap gap-2">
             <span
@@ -91,21 +126,23 @@ const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
             >
               {task.status}
             </span>
+            <span className="px-2 py-1 rounded-full text-xs font-medium  bg-blue-100 border border-blue-700 flex text-blue-700">
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              Due: {new Date(task.dueDate).toLocaleDateString()}
+            </span>
           </div>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => onEdit(task)}
-            className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
-          >
-            Edit
-          </button>
-          <button
-            onClick={handleDeleteClick}
-            className="flex-1 px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200"
-          >
-            Delete
-          </button>
         </div>
       </div>
 
