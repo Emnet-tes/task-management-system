@@ -11,7 +11,7 @@ export interface Task {
   status: TaskStatus;
   userId: string;
   createdAt: Date;
-  lastUpdated?: Date;
+  updatedAt?: Date;
 }
 
 export interface TaskInput {

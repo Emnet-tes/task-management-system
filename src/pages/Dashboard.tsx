@@ -57,8 +57,12 @@ const Dashboard = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
+    if (!user?.uid) {
+      console.error("User is not authenticated.");
+      return;
+    }
     try {
-      await deleteTask(taskId);
+      await deleteTask(user.uid , taskId);
     } catch (error) {
       console.error("Error deleting task:", error);
     }

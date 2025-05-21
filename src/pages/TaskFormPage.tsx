@@ -2,7 +2,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TaskForm from "../features/tasks/TaskForm";
-import { getTaskById, createTask, updateTask } from "../features/tasks/taskService";
+import {
+  getTaskById,
+  createTask,
+  updateTask,
+} from "../features/tasks/taskService";
 import type { TaskInput } from "../types/tasks";
 import { auth } from "../config/firebase";
 
@@ -23,14 +27,16 @@ const TaskFormPage = () => {
     if (id) {
       const fetchTask = async () => {
         try {
-          const taskData = await getTaskById(id);
+          const taskData = await getTaskById(user.uid, id);
           // Verify the task belongs to the current user
           if (taskData.userId !== user.uid) {
+            console.log("Task not found or does not belong to user");
             navigate("/dashboard");
             return;
           }
           setTask(taskData);
         } catch (err) {
+          console.log("Error fetching task:", err);
           setError("Failed to load task");
           console.error(err);
         } finally {
@@ -48,7 +54,7 @@ const TaskFormPage = () => {
 
     try {
       if (id) {
-        await updateTask(id, taskInput);
+        await updateTask(user.uid , id, taskInput);
       } else {
         await createTask(taskInput, user.uid);
       }
