@@ -87,7 +87,7 @@ const TasksPage = () => {
   }, [tasks, filters, sortKey]);
 
   const handleEditTask = (task: Task) => {
-    setEditTaskId(task.id); 
+    setEditTaskId(task.id);
     setIsModalOpen(true);
   };
 
@@ -134,8 +134,7 @@ const TasksPage = () => {
         <TaskFormModal
           taskId={editTaskId ?? undefined}
           onClose={() => setIsModalOpen(false)}
-          onSuccess={() => {
-          }}
+          onSuccess={() => {}}
         />
       )}
     </div>
