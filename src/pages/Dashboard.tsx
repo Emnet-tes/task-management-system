@@ -1,19 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { getTasks, deleteTask } from "../features/tasks/taskService";
+import { getTasks } from "../features/tasks/taskService";
 import type { Task } from "../types/tasks";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import FilterBar from "../components/FilterBar";
 import HorizontalBarChart from "../components/HorizontalBarChart";
 import Navbar from "../components/Navbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [value, setValue] = useState<Date | Date[] | null>(new Date());
   const [userId, setUserId] = useState<string | null>(null);
 
   const today = new Date();

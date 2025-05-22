@@ -8,10 +8,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
+import TaskFormModal from "../components/TaskFormModal";
+
 const TasksPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(auth.currentUser);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editTaskId, setEditTaskId] = useState<string | null>(null);
 
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [filters, setFilters] = useState<{
@@ -82,12 +86,9 @@ const TasksPage = () => {
     setFilteredTasks(result);
   }, [tasks, filters, sortKey]);
 
-  const handleAddTaskClick = () => {
-    navigate("/tasks/add");
-  };
-
   const handleEditTask = (task: Task) => {
-    navigate(`/tasks/edit/${task.id}`);
+    setEditTaskId(task.id); 
+    setIsModalOpen(true);
   };
 
   const handleDeleteTask = async (taskId: string) => {
@@ -115,12 +116,7 @@ const TasksPage = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
       <div className="w-full max-w-6xl mx-auto p-4 sm:p-8">
         <Navbar />
-        <button
-          onClick={handleAddTaskClick}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 mb-4"
-        >
-          Add Task
-        </button>
+
         <FilterBar
           onFilterChange={handleFilterChange}
           onSortChange={handleSortChange}
@@ -134,6 +130,14 @@ const TasksPage = () => {
           />
         </div>
       </div>
+      {isModalOpen && (
+        <TaskFormModal
+          taskId={editTaskId ?? undefined}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={() => {
+          }}
+        />
+      )}
     </div>
   );
 };

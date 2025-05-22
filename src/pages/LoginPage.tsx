@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { useNavigate } from "react-router-dom";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -116,7 +117,7 @@ const LoginPage: React.FC = () => {
               style={{
                 position: "absolute",
                 right: 10,
-                top: 34,
+                top: 45,
                 background: "none",
                 border: "none",
                 cursor: "pointer",
@@ -126,7 +127,7 @@ const LoginPage: React.FC = () => {
               }}
               tabIndex={-1}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <FaRegEye /> :<FaRegEyeSlash />}
             </button>
           </div>
           {error && (

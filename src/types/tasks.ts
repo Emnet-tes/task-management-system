@@ -1,5 +1,4 @@
-
-export type TaskPriority = "Low" | "Med" | "High";
+export type TaskPriority = "Low" | "Med" | "High" | "Urgent";
 export type TaskStatus = "To Do" | "In Progress" | "Done";
 
 export interface Task {
@@ -21,3 +20,14 @@ export interface TaskInput {
   priority: TaskPriority;
   status: TaskStatus;
 }
+
+export type PriorityData = {
+  [key: string]: number;
+};
+
+export const priorityColors: { [key: string]: string } = {
+  Urgent: "bg-red-500",
+  High: "bg-orange-500",
+  Med: "bg-yellow-500",
+  Low: "bg-blue-500",
+};

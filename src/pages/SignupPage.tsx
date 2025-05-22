@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import {auth} from "../config/firebase";
+import { auth } from "../config/firebase";
 import { useNavigate } from "react-router-dom";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -130,7 +131,7 @@ const SignupPage: React.FC = () => {
               }}
               tabIndex={-1}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <FaRegEye /> :<FaRegEyeSlash />}
             </button>
           </div>
           {error && (

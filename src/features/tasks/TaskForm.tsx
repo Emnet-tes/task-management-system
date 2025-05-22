@@ -1,4 +1,3 @@
-// src/features/tasks/TaskForm.tsx
 import { useEffect, useState } from "react";
 import type { TaskInput } from "../../types/tasks";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +58,8 @@ const TaskForm = ({ onSubmit, existingTask, onCancel }: TaskFormProps) => {
           value={formData.title}
           onChange={handleInputChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          placeholder="Enter task title..."
+          className="border border-gray-400  p-2 mt-1 block w-full rounded-md  shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
 
@@ -76,7 +76,7 @@ const TaskForm = ({ onSubmit, existingTask, onCancel }: TaskFormProps) => {
           value={formData.description}
           onChange={handleInputChange}
           rows={4}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="p-2 border border-gray-400  mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
           placeholder="Enter task description..."
         />
       </div>
@@ -95,48 +95,50 @@ const TaskForm = ({ onSubmit, existingTask, onCancel }: TaskFormProps) => {
           value={formData.dueDate}
           onChange={handleInputChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="p-2 mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
+      <div className="flex gap-2 ">
+        <div className="w-full">
+          <label
+            htmlFor="priority"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Priority
+          </label>
+          <select
+            id="priority"
+            name="priority"
+            value={formData.priority}
+            onChange={handleInputChange}
+            className="border border-gray-400 mt-1 block w-full rounded-md p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="Low">Low</option>
+            <option value="Med">Medium</option>
+            <option value="High">High</option>
+            <option value="High">Urgent</option>
+          </select>
+        </div>
 
-      <div>
-        <label
-          htmlFor="priority"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Priority
-        </label>
-        <select
-          id="priority"
-          name="priority"
-          value={formData.priority}
-          onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        >
-          <option value="Low">Low</option>
-          <option value="Med">Medium</option>
-          <option value="High">High</option>
-        </select>
-      </div>
-
-      <div>
-        <label
-          htmlFor="status"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Status
-        </label>
-        <select
-          id="status"
-          name="status"
-          value={formData.status}
-          onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        >
-          <option value="To Do">To Do</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Done">Done</option>
-        </select>
+        <div className="w-full">
+          <label
+            htmlFor="status"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Status
+          </label>
+          <select
+            id="status"
+            name="status"
+            value={formData.status}
+            onChange={handleInputChange}
+            className="p-2 border-gray-400 mt-1 block w-full rounded-md border  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="To Do">To Do</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Done">Done</option>
+          </select>
+        </div>
       </div>
 
       <div className="flex justify-end space-x-3 pt-4">
