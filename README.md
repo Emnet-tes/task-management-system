@@ -1,54 +1,72 @@
-# React + TypeScript + Vite
+# 📝 Task Management Web Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-featured task management web application that allows users to efficiently manage their daily tasks with priority levels, due dates, and real-time interactions.
 
-Currently, two official plugins are available:
+## 📌 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User authentication with Firebase
+- Create, edit, and delete tasks
+- Mark tasks as completed
+- Task categorization based on due date (e.g. Today’s Tasks, Upcoming)
+- Priority labeling (High, Medium, Low)
+- Overdue task indication
+- Responsive UI with Tailwind CSS
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠 Tech Stack
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **Frontend**: React, TypeScript, Tailwind CSS
+- **Backend**: Firebase (Authentication, Firestore)
+- **Routing**: React Router
+- **State Management**: useState, useEffect, useContext (optional)
+- **Deployment**: Vercel / Netlify (specify your platform)
+
+---
+
+## 🧠 Installation & Setup Instructions
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/your-username/task-manager-app.git
+   cd task-manager-app
+   ```
+2. ** Install dependencies **
+   ```bash
+   npm install
+    ```
+3.Configure Firebase
+Create a .env file and add your Firebase config:
+```bash
+VITE_API_KEY=your_api_key
+VITE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_PROJECT_ID=your_project_id
+VITE_STORAGE_BUCKET=your_bucket
+VITE_MESSAGING_SENDER_ID=your_id
+VITE_APP_ID=your_app_id
 ```
+4. Run the app
+   ```bash
+   npm run dev
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+   
+📅 Weekly Progress Report
+ – Project Setup & Firebase Integration
+   Initialized Vite + React + TypeScript
+   Integrated Firebase Authentication
+   Set up Firestore database
+   Implemented user sign-up and login functionality
+ – Task CRUD & UI Design
+   Designed responsive UI with Tailwind CSS
+   Implemented task creation, editing, deletion
+   Set up modal for task form
+   Stored tasks in Firestore with real-time updates
+ – Task Categorization & Dashboard
+   Categorized tasks into “Today’s Tasks”, “Upcoming”, and “Overdue”
+   Added conditional styling for overdue tasks
+ – Navbar & Final Features
+ – Implemented mobile menu 
+ – Conducted testing and minor bug fixes
+   
