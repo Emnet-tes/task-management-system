@@ -67,5 +67,5 @@ VITE_APP_ID=your_app_id
 - Categorized tasks into “Today’s Tasks”, “Upcoming”, and “Overdue”  
 - Added conditional styling for overdue tasks  
 
-- Implemented mobile menu with `<CiMenuBurger />`  
+- Implemented mobile menu 
 - Conducted testing and minor bug fixes  
