@@ -52,21 +52,20 @@ VITE_APP_ID=your_app_id
    ```
 
    
-📅 Weekly Progress Report
- – Project Setup & Firebase Integration
-   Initialized Vite + React + TypeScript
-   Integrated Firebase Authentication
-   Set up Firestore database
-   Implemented user sign-up and login functionality
- – Task CRUD & UI Design
-   Designed responsive UI with Tailwind CSS
-   Implemented task creation, editing, deletion
-   Set up modal for task form
-   Stored tasks in Firestore with real-time updates
- – Task Categorization & Dashboard
-   Categorized tasks into “Today’s Tasks”, “Upcoming”, and “Overdue”
-   Added conditional styling for overdue tasks
- – Navbar & Final Features
- – Implemented mobile menu 
- – Conducted testing and minor bug fixes
-   
+## 📅 Weekly Progress Report
+
+- Initialized Vite + React + TypeScript  
+- Integrated Firebase Authentication  
+- Set up Firestore database  
+- Implemented user sign-up and login functionality  
+
+- Designed responsive UI with Tailwind CSS  
+- Implemented task creation, editing, and deletion  
+- Set up modal for task form  
+- Stored tasks in Firestore with real-time updates  
+
+- Categorized tasks into “Today’s Tasks”, “Upcoming”, and “Overdue”  
+- Added conditional styling for overdue tasks  
+
+- Implemented mobile menu with `<CiMenuBurger />`  
+- Conducted testing and minor bug fixes  
