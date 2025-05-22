@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { getTasks } from "../features/tasks/taskService";
 import type { Task } from "../types/tasks";
@@ -14,13 +14,15 @@ import StatusCard from "../components/StatusCard";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [value, setValue] = useState<Date | Date[] | null>(new Date());
+  // const [value, setValue] = useState<Date | Date[] | null>(new Date());
   const [userId, setUserId] = useState<string | null>(null);
+
+  
 
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0];
-  const selectedDateStr =
-    value instanceof Date ? value.toISOString().split("T")[0] : todayStr;
+  // const selectedDateStr =
+  //   value instanceof Date ? value.toISOString().split("T")[0] : todayStr;
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -43,7 +45,7 @@ const Dashboard = () => {
   const overdueTasks = tasks.filter(
     (t) => new Date(t.dueDate) < today && t.status !== "Done"
   );
-  const selectedDayTasks = tasks.filter((t) => t.dueDate === selectedDateStr);
+  // const selectedDayTasks = tasks.filter((t) => t.dueDate === selectedDateStr);
 
   const statusCounts = {
     "To Do": tasks.filter((t) => t.status === "To Do").length,
@@ -88,7 +90,7 @@ const Dashboard = () => {
             overdue
           />
           <div className="bg-white rounded-xl p-4 shadow-md flex flex-col items-center">
-            <h2 className="text-lg font-medium mb-2">📅 Pick a Date</h2>
+            <h2 className="text-lg font-medium mb-2">📅 Calender</h2>
             <Calendar className="rounded-xl border-none shadow" />
           </div>
         </div>
@@ -100,7 +102,7 @@ const Dashboard = () => {
           </div>
 
           {/* Tasks for Picked Date */}
-          <div className="bg-white rounded-xl shadow-md p-6">
+          {/* <div className="bg-white rounded-xl shadow-md p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Tasks for {selectedDateStr}
             </h2>
@@ -113,7 +115,7 @@ const Dashboard = () => {
                 <p className="text-gray-400">No tasks for this date</p>
               )}
             </ul>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
@@ -121,4 +123,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

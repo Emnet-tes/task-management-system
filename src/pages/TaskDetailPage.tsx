@@ -93,12 +93,6 @@ const TaskDetailPage = () => {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate(`/tasks/edit/${task.id}`)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
-            >
-              Edit
-            </button>
-            <button
               onClick={() => navigate("/tasks")}
               className="p-2 text-gray-500 hover:text-gray-700"
               title="Close"

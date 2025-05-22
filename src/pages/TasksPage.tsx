@@ -5,14 +5,17 @@ import { deleteTask, getTasks } from "../features/tasks/taskService";
 import type { Task, TaskPriority, TaskStatus } from "../types/tasks";
 import { auth } from "../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { useNavigate , useLocation} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
+import TaskFormModal from "../components/TaskFormModal";
+
 const TasksPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(auth.currentUser);
-  const [loadingAuth, setLoadingAuth] = useState(true); // <-- add this
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editTaskId, setEditTaskId] = useState<string | null>(null);
 
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [filters, setFilters] = useState<{
@@ -21,7 +24,6 @@ const TasksPage = () => {
   }>({});
   const [sortKey, setSortKey] = useState<"dueDate" | "createdAt">("dueDate");
   const navigate = useNavigate();
-  const location = useLocation();
   const handleFilterChange = (newFilters: {
     status?: TaskStatus;
     priority?: TaskPriority;
@@ -35,14 +37,12 @@ const TasksPage = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
-      setLoadingAuth(false); // <-- set loadingAuth to false after auth check
     });
 
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
-    if (loadingAuth) return; // <-- wait for auth check
     if (!user) {
       navigate("/");
       return;
@@ -59,7 +59,7 @@ const TasksPage = () => {
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [user, loadingAuth, navigate]);
+  }, [user]);
 
   useEffect(() => {
     let result = [...tasks];
@@ -86,12 +86,9 @@ const TasksPage = () => {
     setFilteredTasks(result);
   }, [tasks, filters, sortKey]);
 
-  const handleAddTaskClick = () => {
-    navigate("/tasks/add" , { state: { backgroundLocation: location } });
-  };
-
   const handleEditTask = (task: Task) => {
-    navigate(`/tasks/edit/${task.id}` , { state: { backgroundLocation: location } });
+    setEditTaskId(task.id);
+    setIsModalOpen(true);
   };
 
   const handleDeleteTask = async (taskId: string) => {
@@ -107,7 +104,7 @@ const TasksPage = () => {
       console.error("Error deleting task:", error);
     }
   };
-  if (loadingAuth || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-gray-600">Loading...</p>
@@ -119,12 +116,7 @@ const TasksPage = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
       <div className="w-full max-w-6xl mx-auto p-4 sm:p-8">
         <Navbar />
-        <button
-          onClick={handleAddTaskClick}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 mb-4"
-        >
-          Add Task
-        </button>
+
         <FilterBar
           onFilterChange={handleFilterChange}
           onSortChange={handleSortChange}
@@ -138,6 +130,13 @@ const TasksPage = () => {
           />
         </div>
       </div>
+      {isModalOpen && (
+        <TaskFormModal
+          taskId={editTaskId ?? undefined}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={() => {}}
+        />
+      )}
     </div>
   );
 };

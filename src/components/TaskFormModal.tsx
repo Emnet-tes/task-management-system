@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 import TaskForm from "../features/tasks/TaskForm";
 import {
   getTaskById,
   createTask,
   updateTask,
 } from "../features/tasks/taskService";
-import type { TaskInput } from "../types/tasks";
 import { auth } from "../config/firebase";
-import { toast } from "react-toastify";
 import { onAuthStateChanged } from "firebase/auth";
-import Navbar from "../components/Navbar";
+import type { TaskInput } from "../types/tasks";
+import { toast } from "react-toastify";
 
-const TaskFormPage = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
+type Props = {
+  taskId?: string;
+  onClose: () => void;
+  onSuccess: () => void;
+};
 
+const TaskFormModal = ({ taskId, onClose, onSuccess }: Props) => {
   const [user, setUser] = useState(auth.currentUser);
   const [task, setTask] = useState<TaskInput | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,21 +24,18 @@ const TaskFormPage = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
-        navigate("/");
+        toast.error("You must be signed in.");
         return;
       }
 
       setUser(firebaseUser);
 
-      if (id) {
+      if (taskId) {
         try {
-          const taskData = await getTaskById(firebaseUser.uid, id);
-          if (taskData.userId !== firebaseUser.uid) {
-            navigate("/tasks");
-            return;
-          }
+          const taskData = await getTaskById(firebaseUser.uid, taskId);
           setTask(taskData);
         } catch (err) {
+          console.error("Error fetching task:", err);
           toast.error("Failed to load task");
         }
       }
@@ -47,50 +44,49 @@ const TaskFormPage = () => {
     });
 
     return () => unsubscribe();
-  }, [id, navigate]);
+  }, [taskId]);
 
   const handleSubmit = async (taskInput: TaskInput) => {
     if (!user) return;
+
     try {
-      if (id) {
-        await updateTask(user.uid, id, taskInput);
+      if (taskId) {
+        await updateTask(user.uid, taskId, taskInput);
         toast.success("Task updated successfully");
       } else {
         await createTask(taskInput, user.uid);
         toast.success("Task created successfully");
       }
-      navigate(-1); // go back to background route
+      onSuccess();
+      onClose();
     } catch (error) {
       toast.error("Failed to save task");
+      console.error("Error saving task:", error);
     }
   };
 
-  if (loading) {
-    return null;
-  }
+  if (loading) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
         <button
-          className="absolute top-3 right-4 text-gray-500 hover:text-gray-700"
-          onClick={() => navigate(-1)}
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-600 hover:text-black"
         >
-          ✕
+          ✖
         </button>
-        <Navbar />
         <h2 className="text-xl font-semibold mb-4">
-          {id ? "Edit Task" : "Create New Task"}
+          {taskId ? "Edit Task" : "Create New Task"}
         </h2>
         <TaskForm
           onSubmit={handleSubmit}
           existingTask={task}
-          onCancel={() => navigate(-1)}
+          onCancel={onClose}
         />
       </div>
     </div>
   );
 };
 
-
-export default TaskFormPage;
+export default TaskFormModal;

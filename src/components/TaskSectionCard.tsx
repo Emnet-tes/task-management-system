@@ -8,19 +8,24 @@ const TaskSectionCard = ({
     id: string;
     title: string;
     description: string;
-    priority: "High" | "Med" | "Low";
+    priority: "Urgent" | "High" | "Med" | "Low";
     dueDate: string;
   }[];
   overdue?: boolean;
 }) => {
   const priorityColorMap = {
+    Urgent: "bg-pink-200 text-pink-800",
     High: "bg-red-200 text-red-800",
     Med: "bg-yellow-200 text-yellow-800",
     Low: "bg-green-200 text-green-800",
   };
 
   return (
-    <div className={`p-4 rounded-xl shadow-md space-y-4 ${overdue ? "bg-red-50" : "bg-white"}`}>
+    <div
+      className={`p-4 rounded-xl shadow-md space-y-4 ${
+        overdue ? "bg-red-50" : "bg-white"
+      }`}
+    >
       <h2 className={`text-md font-semibold ${overdue ? "text-red-700" : ""}`}>
         {sectionTitle}
       </h2>
@@ -28,13 +33,14 @@ const TaskSectionCard = ({
       {tasks.length > 0 ? (
         tasks.map((task) => (
           <div key={task.id} className="flex items-start gap-2">
-            <input type="checkbox" className="mt-1" />
             <div className="flex flex-col w-full">
               <p className="font-semibold text-sm">{task.title}</p>
               <p className="text-xs text-gray-600">{task.description}</p>
               <div className="flex items-center gap-2 mt-1">
                 <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${priorityColorMap[task.priority]}`}
+                  className={`text-xs px-2 py-0.5 rounded-full ${
+                    priorityColorMap[task.priority]
+                  }`}
                 >
                   {task.priority}
                 </span>

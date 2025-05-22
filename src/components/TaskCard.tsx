@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Task } from "../types/tasks";
 import Modal from "./Modal";
+import { CiEdit } from "react-icons/ci";
+import { MdDelete } from "react-icons/md";
 
 interface TaskCardProps {
   task: Task;
@@ -13,10 +15,10 @@ const getPriorityColor = (priority: string) => {
   switch (priority) {
     case "High":
       return "bg-red-100 text-red-800";
-    case "Medium":
+    case "Med":
       return "bg-yellow-100 text-yellow-800";
     case "Low":
-      return "bg-blue-100 text-blue-800";
+      return "bg-green-100 text-green-800";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -35,7 +37,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
+const TaskCard = ({ task, onDelete }: TaskCardProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -45,99 +47,73 @@ const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
     setIsDeleteModalOpen(false);
   };
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Prevent navigation if clicking on edit/delete buttons
-    if (
-      (e.target as HTMLElement).closest("button") ||
-      (e.target as HTMLElement).closest("svg")
-    ) {
-      return;
-    }
-    navigate(`/tasks/${task.id}`);
-  };
-
   return (
     <>
       <div
-        className="bg-white rounded-xl shadow border border-gray-200 p-5 w-full cursor-pointer hover:shadow-lg transition"
-        onClick={handleCardClick}
-        tabIndex={0}
-        role="button"
-        aria-label={`View details for ${task.title}`}
+        className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200 cursor-pointer"
+        onClick={() => navigate(`/tasks/${task.id}`)}
       >
-        <div className="flex justify-between items-start">
-          <div>
-            <h4 className="text-lg font-semibold text-gray-800">
-              {task.title}
-            </h4>
-            <p className="text-sm text-gray-500 mt-1">
-              {task.description || "No description provided."}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="flex justify-between items-start mb-2">
+          <h4 className="text-lg font-semibold text-gray-800">{task.title}</h4>
+          <div
+            className="flex items-center space-x-6"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(task);
-              }}
-              className="text-gray-500 hover:text-blue-600"
+              onClick={() => navigate(`/tasks/${task.id}`)}
+              className="text-blue-600 hover:text-green-800"
+              title="Edit"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <CiEdit size={20} />
             </button>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsDeleteModalOpen(true);
-              }}
-              className="text-gray-500 hover:text-red-600"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="text-red-600 hover:text-red-800"
+              title="Delete"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M6 18L18 6M6 6l12 12"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <MdDelete size={20} />
             </button>
           </div>
         </div>
-
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
-          <span
-            className={`px-3 py-1 rounded-full font-medium ${getPriorityColor(
-              task.priority
-            )}`}
-          >
-            {task.priority}
-          </span>
-          <span
-            className={`px-3 py-1 rounded-full font-medium ${getStatusColor(
-              task.status
-            )}`}
-          >
-            {task.status}
-          </span>
-          <span className="text-gray-600">
-            📅 {new Date(task.dueDate).toLocaleDateString()}
-          </span>
+        <p className="text-gray-600 mb-4 line-clamp-1">
+          {task.description || "No description provided."}
+        </p>
+        <div className="space-y-2">
+          <div className="text-sm text-gray-500">
+            Created At: {new Date(task.dueDate).toLocaleDateString()}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(
+                task.priority
+              )}`}
+            >
+              {task.priority}
+            </span>
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                task.status
+              )}`}
+            >
+              {task.status}
+            </span>
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 border border-blue-700 text-blue-700 flex items-center">
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              Due: {new Date(task.dueDate).toLocaleDateString()}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -146,7 +122,7 @@ const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
         title="Delete Task"
-        message={`Are you sure you want to delete "${task.title}"?`}
+        message={`Are you sure you want to delete "${task.title}"? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"
       />
