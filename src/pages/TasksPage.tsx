@@ -5,13 +5,14 @@ import { deleteTask, getTasks } from "../features/tasks/taskService";
 import type { Task, TaskPriority, TaskStatus } from "../types/tasks";
 import { auth } from "../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useLocation} from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
 const TasksPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(auth.currentUser);
+  const [loadingAuth, setLoadingAuth] = useState(true); // <-- add this
 
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [filters, setFilters] = useState<{
@@ -20,6 +21,7 @@ const TasksPage = () => {
   }>({});
   const [sortKey, setSortKey] = useState<"dueDate" | "createdAt">("dueDate");
   const navigate = useNavigate();
+  const location = useLocation();
   const handleFilterChange = (newFilters: {
     status?: TaskStatus;
     priority?: TaskPriority;
@@ -33,12 +35,14 @@ const TasksPage = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
+      setLoadingAuth(false); // <-- set loadingAuth to false after auth check
     });
 
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
+    if (loadingAuth) return; // <-- wait for auth check
     if (!user) {
       navigate("/");
       return;
@@ -55,7 +59,7 @@ const TasksPage = () => {
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [user]);
+  }, [user, loadingAuth, navigate]);
 
   useEffect(() => {
     let result = [...tasks];
@@ -83,11 +87,11 @@ const TasksPage = () => {
   }, [tasks, filters, sortKey]);
 
   const handleAddTaskClick = () => {
-    navigate("/tasks/add");
+    navigate("/tasks/add" , { state: { backgroundLocation: location } });
   };
 
   const handleEditTask = (task: Task) => {
-    navigate(`/tasks/edit/${task.id}`);
+    navigate(`/tasks/edit/${task.id}` , { state: { backgroundLocation: location } });
   };
 
   const handleDeleteTask = async (taskId: string) => {
@@ -103,7 +107,7 @@ const TasksPage = () => {
       console.error("Error deleting task:", error);
     }
   };
-  if (loading) {
+  if (loadingAuth || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-gray-600">Loading...</p>
