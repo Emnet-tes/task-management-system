@@ -37,7 +37,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const TaskCard = ({ task, onDelete }: TaskCardProps) => {
+const TaskCard = ({ task, onDelete,onEdit }: TaskCardProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -49,26 +49,20 @@ const TaskCard = ({ task, onDelete }: TaskCardProps) => {
 
   return (
     <>
-      <div
-        className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200 cursor-pointer"
-        onClick={() => navigate(`/tasks/${task.id}`)}
-      >
+      <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200 ">
         <div className="flex justify-between items-start mb-2">
           <h4 className="text-lg font-semibold text-gray-800">{task.title}</h4>
-          <div
-            className="flex items-center space-x-6"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="flex items-center space-x-6">
             <button
-              onClick={() => navigate(`/tasks/${task.id}`)}
-              className="text-blue-600 hover:text-green-800"
+              onClick={() => onEdit(task)}
+              className="text-blue-600 hover:text-green-800 cursor-pointer"
               title="Edit"
             >
               <CiEdit size={20} />
             </button>
             <button
               onClick={() => setIsDeleteModalOpen(true)}
-              className="text-red-600 hover:text-red-800"
+              className="text-red-600 hover:text-red-800 cursor-pointer"
               title="Delete"
             >
               <MdDelete size={20} />
@@ -78,42 +72,51 @@ const TaskCard = ({ task, onDelete }: TaskCardProps) => {
         <p className="text-gray-600 mb-4 line-clamp-1">
           {task.description || "No description provided."}
         </p>
-        <div className="space-y-2">
-          <div className="text-sm text-gray-500">
-            Created At: {new Date(task.dueDate).toLocaleDateString()}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(
-                task.priority
-              )}`}
-            >
-              {task.priority}
-            </span>
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                task.status
-              )}`}
-            >
-              {task.status}
-            </span>
-            <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 border border-blue-700 text-blue-700 flex items-center">
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        <div className="flex  justify-between gap-2 ">
+          <div className="space-y-2">
+            <div className="text-sm text-gray-500">
+              Created At: {new Date(task.dueDate).toLocaleDateString()}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(
+                  task.priority
+                )}`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              Due: {new Date(task.dueDate).toLocaleDateString()}
-            </span>
+                {task.priority}
+              </span>
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                  task.status
+                )}`}
+              >
+                {task.status}
+              </span>
+              <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 border border-blue-700 text-blue-700 flex items-center">
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                Due: {new Date(task.dueDate).toLocaleDateString()}
+              </span>
+            </div>
           </div>
+
+          <button
+            className="text-blue-500 px-4 py-0  items rounded-md underline hover:bg-blue-100 cursor-pointer"
+            onClick={() => navigate(`/tasks/${task.id}`)}
+          >
+            Detail
+          </button>
         </div>
       </div>
 
