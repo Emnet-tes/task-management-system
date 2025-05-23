@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import TaskDetailPage from "./pages/TaskDetailPage";
 import TasksPage from "./pages/TasksPage";
+import NotFound from "./pages/NotFound";
 
 function AppRoutes() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function AppRoutes() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/tasks" element={<TasksPage/>} />
         <Route path="/tasks/:id" element={<TaskDetailPage />} />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
     </>
   );
